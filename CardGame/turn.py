@@ -1,5 +1,5 @@
-from display import display_player_hand
-from display import display_turn
+from display import draw_player_hand
+from display import draw_turn
 from action import Action
 
 
@@ -15,8 +15,8 @@ class Turn:
         self.action_queue = []  # Queue to hold selected cards for this turn
 
     def display(self):
-        display_turn(self, self.battlefield)
-        display_player_hand(self.player)
+        draw_turn(self, self.battlefield)
+        draw_player_hand(self.player)
 
     def start_turn(self):
         print(f"{self.player.name}'s turn begins.")
@@ -25,9 +25,6 @@ class Turn:
 
         self.wait_for_player_input()
         self.execute_action_queue()
-
-    
-        
 
         self.display()
 
@@ -45,6 +42,10 @@ class Turn:
 
                 # Prompt the user for input
             player_input = input("Enter action (e.g., '1->2,2' for casting 1st card to position 2nd cols and 3rd rows): ")
+
+            #player choose to pass
+            if player_input == "pass":
+                break
             
             # Split the input into card index and position
             card_part, pos_part = player_input.split('->')

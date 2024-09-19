@@ -11,6 +11,8 @@ def draw_battlefield(battlefield):
         for x in range(battlefield.x_size): 
             monster = battlefield.grid[y][x]  
             if monster:
+                if monster.name == "Corpse":
+                    print("[ X ]", end=" ")  # Display "X" for corpses
                 if monster.is_damaged_last_turn:
                     # Display damaged HP in yellow
                     print(f"[{monster.attack}|\033[93m{monster.hp}\033[0m]", end=" ")
@@ -22,7 +24,7 @@ def draw_battlefield(battlefield):
     print("====================\n")
 
 
-def display_player_hand(player):
+def draw_player_hand(player):
     """
     Display the player's hand of cards.
     Each card is listed by its name with an index for selection.
@@ -36,7 +38,7 @@ def display_player_hand(player):
     print("=====================\n")
 
 
-def draw_submenu(player):
+def draw_player_menu(player):
     """
     Display the submenu with player's name and available actions.
     """
@@ -48,7 +50,7 @@ def draw_submenu(player):
     print("=====================\n")
 
 
-def display_turn(turn, battlefield):
+def draw_turn(turn, battlefield):
     """
     Display the current state of the turn, including player name, card queue, and optional battlefield.
     """
@@ -71,7 +73,7 @@ def display_turn(turn, battlefield):
 
 
 
-def display_card_effect(card_effect_grid):
+def draw_card_effect(card_effect_grid):
     """
     Display the effect of a card on the battlefield.
     Use red (-X) for damage.
@@ -84,4 +86,56 @@ def display_card_effect(card_effect_grid):
             else:
                 print(f"\033[91m-{effect}\033[0m", end=" ")  # Display damage in red
         print()
+    print("====================\n")
+
+
+def draw_card_details(card):
+    """
+    Display the details of a card.
+    """
+    print("\n=== Card Details ===")
+    print(f"Name: {card.name}")
+    print(f"Type: {card.card_type}")
+    print(f"Description: {card.description}")
+    print("====================\n")
+
+
+
+
+def display_game_state(game):
+    """
+    Display the current state of the game including player information,
+    battlefield, and any other relevant game data.
+    """
+    print("\n=== Game State ===")
+    
+    # Display Player Information
+    
+
+    print("\nBattlefield:")
+    draw_battlefield(game.battlefield)
+
+    #Battlefieldd
+    #playerhands
+    #carddetail
+    #playermenu
+
+    print("Players:")
+    for player in game.players:
+        print(f"{player.name}: HP = {player.hp}")
+
+        draw_player_hand(player)
+
+        if player.hand:
+            draw_card_details(player.hand[0])
+        else:
+            print("No cards available.")
+
+        
+        draw_player_menu(player)
+
+
+
+
+    
     print("====================\n")

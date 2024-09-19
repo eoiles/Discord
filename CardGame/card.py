@@ -1,11 +1,12 @@
 #we do not do any display print outside the display class every display should use display class
 
 class Card:
-    def __init__(self, name, card_id, card_type, picture_url=None):
+    def __init__(self, name, card_id, card_type, picture_url=None,description=None):
         self.name = name
         self.card_id = card_id
         self.card_type = card_type
         self.picture_url = picture_url
+        self.description = description
 
     def __str__(self):
         return f"Card(name='{self.name}', card_id={self.card_id}, card_type='{self.card_type}')"
@@ -28,11 +29,13 @@ class Fireball(Card):
     def __init__(self):
         super().__init__("Fireball", card_id=1, card_type="spell")
         # Define the damage pattern for the Fireball
-        self.damage_pattern = [
+        self.effect_grid = [
             [0, 1, 0],
             [1, 2, 1],
             [0, 1, 0]
         ]
+
+        self.description = "Deals damage to the monster that is in the cross pattern."
 
     def play(self, battlefield, x, y):
         """
@@ -45,6 +48,6 @@ class Fireball(Card):
                 if 1 <= target_x <= battlefield.x_size and 1 <= target_y <= battlefield.y_size:
                     monster = battlefield.get_monster(target_x, target_y)
                     if monster:
-                        damage = self.damage_pattern[dx + 1][dy + 1]
+                        damage = self.effect_grid[dx + 1][dy + 1]
                         monster.take_damage(damage)
                         print(f"Dealt {damage} damage to monster at ({target_x}, {target_y})")

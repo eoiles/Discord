@@ -12,7 +12,7 @@ from player import Player
 from card import Fireball
 
 from turn import Turn
-from display import display_turn,display_card_effect
+from display import draw_turn,draw_card_effect
 
 def test_turn_with_fireball():
     # Create a 3x3 monster grid and add grid
@@ -46,7 +46,7 @@ def test_turn_with_fireball():
         #display turn state
     turn.display()
 
-    display_card_effect(Fireball().damage_pattern)
+    draw_card_effect(Fireball().effect_grid)
 
     turn.wait_for_player_input()
     turn.execute_action_queue()

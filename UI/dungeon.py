@@ -1,43 +1,39 @@
-# This example requires the 'message_content' intent.
+import asyncio
+import discord
 
-import discord # type: ignore
-
-from discord.ext import commands # type: ignore
-
-
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(intents=intents)
-
-class MakeNumberChange(discord.ui.View):
-    def __init__(self,inv:str):
+class DungeonMenu(discord.ui.View):
+    def __init__(self, main_menu):
         super().__init__()
+        self.main_menu = main_menu
+        self.title = "Dungeon Menu"
         self.nbr = 0
+        self.task = None  # Background task
+
+        self.components=[]
+
+        # Add a "Back to Main" button
+        back_button = discord.ui.Button(label="返回主菜单", style=discord.ButtonStyle.secondary)
+        back_button.callback = self.back_to_main_menu  # Set callback to back_to_main_menu
+        self.add_item(back_button)  # Add the button to the view
+
+    async def back_to_main_menu(self, interaction: discord.Interaction):
+
+        await asyncio.gather(
+        interaction.response.edit_message(content="Main Menu", view=self.main_menu),
+        *(msg.delete() for msg in self.components)
+    )
+        
+        
 
 
 
-    @discord.ui.button(label="add 1", style=discord.ButtonStyle.blurple)
-    async def add1(self, interaction:discord.Interaction, button :discord.ui.Button):
-        self.nbr+= 1
-
-        self.nbrbtn.label=str(self.nbr)
-
-        await interaction.response.edit_message(view=self)
-
-    @discord.ui.button(label="0", style=discord.ButtonStyle.gray)
-    async def nbrbtn(self, interaction: discord.Interaction, button: discord.ui.Button):
-        pass  # This button is just for display and doesn't need to do anything
+    @discord.ui.button(label="幽暗森林", style=discord.ButtonStyle.gray)
+    async def start_counter(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # Start the counter task when the button is clicked
+        pass
     
-    @discord.ui.button(label="minus 1", style=discord.ButtonStyle.blurple)
-    async def minus1(self, interaction:discord.Interaction, button :discord.ui.Button):
-        self.nbr-= 1
 
-        self.nbrbtn.label=str(self.nbr)
-
-        await interaction.response.edit_message(view=self)
-
-    @discord.ui.button(label='',emoji='<:LustThoughts:1210190946013024256>', style=discord.ButtonStyle.gray)
+    @discord.ui.button(label='进入',emoji='<:LustThoughts:1210190946013024256>', style=discord.ButtonStyle.gray)
     async def img(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         self.img.emoji="<:think:1204467342223081602>"
@@ -46,15 +42,20 @@ class MakeNumberChange(discord.ui.View):
 
         await interaction.response.edit_message(view=self)
 
-        monstergrid=MonsterGrid(3,3)
+        monstergrid=Battlefield(3,3)
         cardlist=Cardlist(3,1)
+        carddetail = CardDetail() 
         submenu=SubMenu(5,1)
-        await interaction.channel.send(view=monstergrid)
-        await interaction.channel.send(view=cardlist)
-        await interaction.channel.send(view=submenu)
+
+        msg1 = await interaction.channel.send(view=monstergrid)
+        msg2 = await interaction.channel.send(view=cardlist)
+        msg3 = await interaction.channel.send(view=carddetail)
+        msg4 = await interaction.channel.send(view=submenu)
+
+        self.components.extend([msg1, msg2, msg3, msg4])
 
 
-class MonsterGrid(discord.ui.View):
+class Battlefield(discord.ui.View):
     def __init__(self, cols: int,rows:int):
         super().__init__()
         self.emojis = [
@@ -109,7 +110,7 @@ class Cardlist(discord.ui.View):
             for x in range(cols):
                 emoji = self.emojis[x % len(self.emojis)]
                 custom_id = f"{x}-{y}"
-                button = discord.ui.Button(label=f"卡名", emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
+                button = discord.ui.Button(label=f"卡名{x}", emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
                 button.callback = self.toggle_color
                 self.add_item(button)
                 self.buttons.append(button)
@@ -127,6 +128,16 @@ class Cardlist(discord.ui.View):
         
         await interaction.response.edit_message(view=self)
 
+
+class CardDetail(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.button=discord.ui.Button(label=f"火球术在命中目标后会产生爆炸,影响范围内的所有敌人", emoji= "<:6_:1282725896788115456>", style=discord.ButtonStyle.grey, custom_id='custom_id')
+
+        self.add_item(self.button)
+        
+        
+        
 
 class SubMenu(discord.ui.View):
     def __init__(self, cols: int,rows:int):
@@ -164,34 +175,3 @@ class SubMenu(discord.ui.View):
             print("Button not found")
         
         await interaction.response.edit_message(view=self)
-
-
-
-
-
-
-@client.event
-async def on_ready():
-    print(f'We have logged in as {client.user}')
-
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('$hello'):
-        cngnbr=MakeNumberChange(str(123))
-        
-        await message.channel.send(view=cngnbr)
-        
-
-
-import logging
-
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-
-# Assume client refers to a discord.Client subclass...
-
-
-
-client.run('MTI4MjM3MDE4NjY2OTg1MDY5Nw.G35sZM.uQkuTQyiLnW5IvuovcnLI8UKHNOTyCyLpPXhrM',log_handler=handler,log_level=logging.DEBUG)
