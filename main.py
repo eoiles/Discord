@@ -9,7 +9,9 @@ from discord.ext import commands
 from UI.mainmenu import MainMenu  # Adjust the import based on your structure
 
 # Your bot's token
-token = 'MTI4MjM3MDE4NjY2OTg1MDY5Nw.G35sZM.uQkuTQyiLnW5IvuovcnLI8UKHNOTyCyLpPXhrM'
+#token will import from token file
+with open('token', 'r') as file:
+    token = file.read().strip()
 
 intents = discord.Intents.default()
 intents.message_content = True  # Enable message content intent
