@@ -4,6 +4,7 @@ import sys
 import os
 
 from UI.playermenu import PlayerMenu
+from CardGame.monster import Monster
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -88,18 +89,31 @@ class Battlefield(discord.ui.View):
 
                 #if there is monster draw monster
                 if monster:
-                    emoji = monster.emoji
-                    
-                    custom_id = f"{x}-{y}"
+                    assert type(monster) == Monster
+                    if not monster.is_alive():
 
-                    def to_fullwidth(number: int) -> str:
-                        translation_table = str.maketrans("0123456789", "０１２３４５６７８９")
-                        return str(number).translate(translation_table)
 
-                    # Example usage in your code
-                    label = f"{to_fullwidth(monster.attack)}｜{to_fullwidth(monster.hp)}"
+                        emoji='<:transparent:1286823572244922461>'
 
-                    button = discord.ui.Button(label=label, emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
+                        custom_id = f"{x}-{y}"
+                        label = "．Ｘ．"
+
+                        button = discord.ui.Button(label=label,emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
+
+
+                    else:
+                        emoji = monster.emoji
+                        
+                        custom_id = f"{x}-{y}"
+
+                        def to_fullwidth(number: int) -> str:
+                            translation_table = str.maketrans("0123456789", "０１２３４５６７８９")
+                            return str(number).translate(translation_table)
+
+                        # Example usage in your code
+                        label = f"{to_fullwidth(monster.attack)}｜{to_fullwidth(monster.hp)}"
+
+                        button = discord.ui.Button(label=label, emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
 
                     
                 #magic:"ᅠᅠᅠ"
@@ -135,26 +149,21 @@ class Battlefield(discord.ui.View):
 
 
 class Cardlist(discord.ui.View):
-    def __init__(self, cols: int,rows:int):
-        super().__init__()
-        self.emojis = [
-            "<:1_:1282725858724806727>",
-            "<:2_:1282725868120051743>",
-            "<:3_:1282725880468082749>",
-            "<:4_:1282725886474453186>",
-            "<:5_:1282725891956277279>",
-            "<:6_:1282725896788115456>"
-        ]
 
-        self.buttons = []
-        for y in range(rows):
-            for x in range(cols):
-                emoji = self.emojis[x % len(self.emojis)]
-                custom_id = f"{x}-{y}"
-                button = discord.ui.Button(label=f"卡名{x}", emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
-                button.callback = self.toggle_color
-                self.add_item(button)
-                self.buttons.append(button)
+    #for now we only say player1
+    def __init__(self,player_name):
+        super().__init__()
+
+    player_name="player1"
+    '''
+    3 card slots for display player's cards which are 3 buttons to display player hand.
+
+    '''
+    #to be implement later
+    pass
+        
+
+
     async def toggle_color(self, interaction: discord.Interaction):
         custom_id = interaction.data['custom_id']
         original_button = next((button for button in self.buttons if button.custom_id == custom_id), None)

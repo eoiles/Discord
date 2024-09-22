@@ -4,13 +4,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import discord
 from UI.dungeon import DungeonMenu
+from UI.decklist import show_deck  # Import the show_deck function
 
 class MainMenu(discord.ui.View):
     def __init__(self):
         super().__init__()
         # Add buttons manually and link them to specific callbacks
         buttons = [
-            discord.ui.Button(label="Deck", style=discord.ButtonStyle.primary, custom_id="deck",row=1),
+            discord.ui.Button(label="卡组", style=discord.ButtonStyle.primary, custom_id="deck",row=1),
             discord.ui.Button(label="Store", style=discord.ButtonStyle.primary, custom_id="store",row=1),
             discord.ui.Button(label="地下城", style=discord.ButtonStyle.primary, custom_id="dungeon",row=2),
             discord.ui.Button(label="Market", style=discord.ButtonStyle.primary, custom_id="market",row=2),
@@ -29,16 +30,13 @@ class MainMenu(discord.ui.View):
 
         # Handle button-specific logic
         if custom_id == "deck":
-            await self.show_deck(interaction)
+            await show_deck(interaction)
         elif custom_id == "store":
             await self.show_store(interaction)
         elif custom_id == "dungeon":
             await self.show_dungeon(interaction)
         # other button handling...
 
-    async def show_deck(self, interaction: discord.Interaction):
-        # Logic for showing the deck
-        await interaction.response.send_message("Displaying Deck", ephemeral=True)
 
     async def show_store(self, interaction: discord.Interaction):
         # Logic for showing the store

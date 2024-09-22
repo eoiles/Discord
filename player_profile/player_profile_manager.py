@@ -1,68 +1,38 @@
-import os
+
 import json
+from CardGame.player import Player
+from CardGame.card import Card
+# player_profile_manager.py
+
+from CardGame.card import get_predefined_card
 
 class PlayerProfileManager:
-    def __init__(self, player):
-        self.player = player
+    @staticmethod
+    def load_profile(player_name):
+        """
+        Load a player's profile from a JSON file and return a Player instance.
+        """
+        profile_file_path = f'player_profile/profiles/{player_name}.profile'  # Adjust the file path as needed
+        with open(profile_file_path, 'r') as file:
+            data = json.load(file)
 
-    def save_profile(self, filename):
-        """Saves the player's profile to a JSON file in the profiles folder."""
-        os.makedirs('player_profile/profiles', exist_ok=True)  # Create the folder if it doesn't exist
-        filepath = os.path.join('player_profile/profiles', filename)
-        
-        profile_data = {
-            "player_id": self.player.player_id,
-            "name": self.player.name,
-            "hp": self.player.hp,
-            "mana": self.player.mana,
-            "hand_limit": self.player.hand_limit,
-            "deck": [card.to_dict() for card in self.player.deck_manager.deck],
-            "hand": [card.to_dict() for card in self.player.deck_manager.hand],
-            "win_count": self.player.win_count,
-            "loss_count": self.player.loss_count,
-        }
-        
-        with open(filepath, 'w') as f:
-            json.dump(profile_data, f, indent=4)
-        print(f"Profile saved to {filepath}.")
+        # Create the Player instance
+        player = Player(
+            name=data["name"],
+            hp=data["hp"],
+            mana=data["mana"],
+            hand_limit=data["hand_limit"]
+        )
 
-    def load_profile(self, filename):
-        """Loads a player's profile from a JSON file in the profiles folder."""
-        filepath = os.path.join('player_profile/profiles', filename)
-        
-        with open(filepath, 'r') as f:
-            profile_data = json.load(f)
-        
-        self.player.player_id = profile_data["player_id"]
-        self.player.name = profile_data["name"]
-        self.player.hp = profile_data["hp"]
-        self.player.mana = profile_data["mana"]
-        self.player.hand_limit = profile_data["hand_limit"]
-        self.player.deck_manager.deck = [Card.from_dict(card) for card in profile_data["deck"]]
-        self.player.deck_manager.hand = [Card.from_dict(card) for card in profile_data["hand"]]
-        self.player.win_count = profile_data["win_count"]
-        self.player.loss_count = profile_data["loss_count"]
-        
-        print(f"Profile loaded from {filepath}.")
+        # Load the player's deck using predefined cards
+        deck = []
+        for card_data in data["deck"]:
+            card = get_predefined_card(card_data["card_id"])
+            if card:
+                deck.append(card)
+            else:
+                print(f"Card with id {card_data['card_id']} not found.")
 
-    def update_stats(self, hp=None, mana=None, win_count=None, loss_count=None):
-        """Updates player stats like HP, mana, wins, and losses."""
-        if hp is not None:
-            self.player.hp = hp
-        if mana is not None:
-            self.player.mana = mana
-        if win_count is not None:
-            self.player.win_count = win_count
-        if loss_count is not None:
-            self.player.loss_count = loss_count
-
-
-if __name__ == "__main__":
-    player = Player()
-    player_profile_manager = PlayerProfileManager(player)
-    player_profile_manager.save_profile('player_profile.json')
-    player_profile_manager.load_profile('player_profile.json')
-# Example usage:
-# player_profile_manager = PlayerProfileManager(player)
-# player_profile_manager.save_profile('player_profile.json')
-# player_profile_manager.load_profile('player_profile.json')
+        player.deck = deck
+        player.hand = data.get("hand", [])  # Load existing hand if available
+        return player
