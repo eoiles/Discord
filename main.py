@@ -8,6 +8,10 @@ import discord
 from discord.ext import commands
 from UI.mainmenu import MainMenu  # Adjust the import based on your structure
 
+import sys
+import os
+
+
 # Your bot's token
 #token will import from token file
 with open('token', 'r') as file:

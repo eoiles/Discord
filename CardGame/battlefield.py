@@ -17,7 +17,7 @@ class Battlefield:
         self.grid = [[None for _ in range(x_size)] for _ in range(y_size)]  # Initialize the grid
 
     # add_monster(x, y) means adding a monster to the specified column (x) and row (y)
-    def add_monster(self, monster, x, y):
+    def add_monster(self, monster : Monster, x, y):
         # Adjusting for 1-based index
         if 1 <= x <= self.x_size and 1 <= y <= self.y_size:
             self.grid[y-1][x-1] = monster  # Adjust for 0-based grid

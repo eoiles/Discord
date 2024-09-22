@@ -1,5 +1,14 @@
 import asyncio
 import discord
+import sys
+import os
+
+from UI.playermenu import PlayerMenu
+
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from CardGame.game import Game
 
 class DungeonMenu(discord.ui.View):
     def __init__(self, main_menu):
@@ -10,6 +19,9 @@ class DungeonMenu(discord.ui.View):
         self.task = None  # Background task
 
         self.components=[]
+
+        #placeholder for game
+        self.game=None
 
         # Add a "Back to Main" button
         back_button = discord.ui.Button(label="返回主菜单", style=discord.ButtonStyle.secondary)
@@ -28,54 +40,83 @@ class DungeonMenu(discord.ui.View):
 
 
     @discord.ui.button(label="幽暗森林", style=discord.ButtonStyle.gray)
-    async def start_counter(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def map_name(self, interaction: discord.Interaction, button: discord.ui.Button):
         # Start the counter task when the button is clicked
         pass
     
-
+    
+    #we start the game here
     @discord.ui.button(label='进入',emoji='<:LustThoughts:1210190946013024256>', style=discord.ButtonStyle.gray)
-    async def img(self, interaction: discord.Interaction, button: discord.ui.Button):
-
-        self.img.emoji="<:think:1204467342223081602>"
+    async def start(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         
 
         await interaction.response.edit_message(view=self)
 
-        monstergrid=Battlefield(3,3)
-        cardlist=Cardlist(3,1)
-        carddetail = CardDetail() 
-        submenu=SubMenu(5,1)
+        
+        self.game = Game()
 
-        msg1 = await interaction.channel.send(view=monstergrid)
-        msg2 = await interaction.channel.send(view=cardlist)
-        msg3 = await interaction.channel.send(view=carddetail)
-        msg4 = await interaction.channel.send(view=submenu)
+        self.game.add_player('Player1')
 
-        self.components.extend([msg1, msg2, msg3, msg4])
+        self.game.create_battlefield(3, 3)
+
+        goblin = self.game.add_new_monster_to_battlefield("Goblin", 1, 1, 1, 1)
+        orc = self.game.add_new_monster_to_battlefield("Orc", 2, 2, 2, 2)
+
+
+        battlefield = await interaction.channel.send(view=Battlefield(self.game))
+        carddetail = await interaction.channel.send(view=CardDetail())
+
+        cardlist = await interaction.channel.send(view=Cardlist(3,1))
+
+        
+        playermenu = await interaction.channel.send(view=PlayerMenu())
+
+        self.components.extend([battlefield,carddetail,cardlist,playermenu])
 
 
 class Battlefield(discord.ui.View):
-    def __init__(self, cols: int,rows:int):
+    def __init__(self, game: Game):
         super().__init__()
-        self.emojis = [
-            "<:1_:1282725858724806727>",
-            "<:2_:1282725868120051743>",
-            "<:3_:1282725880468082749>",
-            "<:4_:1282725886474453186>",
-            "<:5_:1282725891956277279>",
-            "<:6_:1282725896788115456>"
-        ]
 
         self.buttons = []
-        for y in range(rows):
-            for x in range(cols):
-                emoji = self.emojis[x % len(self.emojis)]
-                custom_id = f"{x}-{y}"
-                button = discord.ui.Button(label=f"{chr(0x1D7F6 + x)}|{chr(0x1D7F6 + y)}", emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
+        battlefield=game.battlefield
+
+        for y in range(battlefield.y_size):
+            for x in range(battlefield.x_size):
+                monster = battlefield.grid[y][x]
+
+                #if there is monster draw monster
+                if monster:
+                    emoji = monster.emoji
+                    
+                    custom_id = f"{x}-{y}"
+
+                    def to_fullwidth(number: int) -> str:
+                        translation_table = str.maketrans("0123456789", "０１２３４５６７８９")
+                        return str(number).translate(translation_table)
+
+                    # Example usage in your code
+                    label = f"{to_fullwidth(monster.attack)}｜{to_fullwidth(monster.hp)}"
+
+                    button = discord.ui.Button(label=label, emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
+
+                    
+                #magic:"ᅠᅠᅠ"
+                #if no monster keep grid :
+                elif monster is None:
+                    emoji='<:transparent:1286823572244922461>'
+
+                    custom_id = f"{x}-{y}"
+                    label = "．．．"
+
+                    button = discord.ui.Button(label=label,emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
+
+                
                 button.callback = self.toggle_color
                 self.add_item(button)
                 self.buttons.append(button)
+
 
     async def toggle_color(self, interaction: discord.Interaction):
         custom_id = interaction.data['custom_id']
@@ -139,39 +180,3 @@ class CardDetail(discord.ui.View):
         
         
 
-class SubMenu(discord.ui.View):
-    def __init__(self, cols: int,rows:int):
-        super().__init__()
-        self.emojis = [
-            "<:1_:1282725858724806727>",
-            "<:2_:1282725868120051743>",
-            "<:3_:1282725880468082749>",
-            "<:4_:1282725886474453186>",
-            "<:5_:1282725891956277279>",
-            "<:6_:1282725896788115456>"
-        ]
-
-        self.buttons = []
-        for y in range(rows):
-            for x in range(cols):
-                emoji = self.emojis[x % len(self.emojis)]
-                custom_id = f"{x}-{y}"
-                button = discord.ui.Button(label=f"", emoji=emoji, style=discord.ButtonStyle.blurple, custom_id=custom_id, row=y)
-                button.callback = self.toggle_color
-                self.add_item(button)
-                self.buttons.append(button)
-        
-
-    async def toggle_color(self, interaction: discord.Interaction):
-        custom_id = interaction.data['custom_id']
-        original_button = next((button for button in self.buttons if button.custom_id == custom_id), None)
-        
-        if original_button:
-            if original_button.style == discord.ButtonStyle.grey:
-                original_button.style = discord.ButtonStyle.blurple
-            else:
-                original_button.style = discord.ButtonStyle.grey
-        else:
-            print("Button not found")
-        
-        await interaction.response.edit_message(view=self)

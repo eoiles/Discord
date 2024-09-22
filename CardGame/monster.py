@@ -5,6 +5,9 @@ class Monster:
         self.hp = hp
         self.is_damaged_last_turn = False  # New attribute to track if monster was damaged 
 
+        #store icon of each monsters
+        self.emoji='<:LustThoughts:1210190946013024256>'
+
     #actually eq need to check all attributes, not just listed
     def __eq__(self, other):
         if not isinstance(other, Monster):

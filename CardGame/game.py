@@ -1,9 +1,19 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'CardGame')))
+
 from battlefield import Battlefield
 from turn import Turn
 from display import display_game_state
 
+from player import Player
+from monster import Monster
+
+
+
+
 class Game:
-    def __init__(self, players, battlefield_size=(3, 3)):
+    def __init__(self, players=[], battlefield_size=(3, 3)):
         """
         Initialize the game with a list of players and a customizable battlefield size.
         :param players: List of Player objects.
@@ -15,12 +25,37 @@ class Game:
         self.round = 1
         self.is_game_over = False
 
+        
+
     def start(self):
         """
         Start the game and initialize any required setup.
         """
         print("Game started!")
+        self.ui.update_ui()  # Update the UI when the game starts
         display_game_state(self)  # Display initial game state
+
+    def add_player(self, player):
+        """
+        Add a player to the game.
+        :param player: Player object to add.
+        """
+        self.players.append(player)
+
+    def create_battlefield(self, x_size, y_size):
+        """
+        Create a new battlefield with the provided size.
+        :param x_size: Width of the battlefield.
+        :param y_size: Height of the battlefield.
+        """
+        self.battlefield = Battlefield(x_size, y_size)
+
+    def set_battlefield(self, battlefield):
+        """
+        Set the battlefield of the game.
+        :param battlefield: Battlefield object to set.
+        """
+        self.battlefield = battlefield
 
     def play_turn(self):
         """
@@ -35,7 +70,7 @@ class Game:
         self.current_player_idx = (self.current_player_idx + 1) % len(self.players)
         self.round += 1
 
-    def add_monster_to_battlefield(self, monster, x, y):
+    def add_monster_to_battlefield(self, monster : Monster, x : int, y : int):
         """
         Adds a monster to a specific position on the battlefield.
         :param monster: Monster object to add.
@@ -44,6 +79,18 @@ class Game:
         """
         self.battlefield.add_monster(monster, x, y)
         print(f"{monster.name} added to battlefield at position ({x}, {y})")
+
+    def add_new_monster_to_battlefield(self, monster_name : str, monster_attack : int, monster_hp : int, x : int, y : int):
+        """
+        Adds a new monster to the battlefield.
+        :param monster_name: Name of the monster.
+        :param monster_attack: Attack power of the monster.
+        :param monster_hp: Health points of the monster.
+        :param x: X-coordinate on the battlefield.
+        :param y: Y-coordinate on the battlefield.
+        """
+        monster = Monster(monster_name, monster_attack, monster_hp)
+        self.add_monster_to_battlefield(monster, x, y)
 
     def check_winner(self):
         """
