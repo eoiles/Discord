@@ -6,7 +6,7 @@ from battlefield import Battlefield
 from turn import Turn
 from display import display_game_state
 
-from player import Player
+from CardGame.player import Player
 from CardGame.monster import Monster
 
 
@@ -33,7 +33,25 @@ class Game:
         """
         print("Game started!")
 
+        self.initialize_player_hand()
+
         display_game_state(self)  # Display initial game state
+    
+
+    #if the player hand is less than 3 cards then draw cards to 3.
+
+    def initialize_player_hand(self):
+        """
+        Initialize the player's hand with 3 cards.
+        """
+        for player in self.players:
+            assert isinstance(player, Player)
+
+                    #testonly
+            player.deck.shuffle()
+
+            player.draw_card(3)
+
 
     def display(self):
         """
@@ -41,7 +59,7 @@ class Game:
         """
         display_game_state(self)
 
-    def add_player(self, player):
+    def add_player(self, player : Player):
         """
         Add a player to the game.
         :param player: Player object to add.

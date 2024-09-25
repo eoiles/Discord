@@ -11,6 +11,8 @@ from CardGame.monster import Monster
 from CardGame.card import Fireball
 from CardGame.battlefield import Battlefield
 
+from player_profile.player_profile_manager import PlayerProfileManager
+
 
 class TestGame(unittest.TestCase):
 
@@ -23,12 +25,16 @@ class TestGame(unittest.TestCase):
 
         self.game.load_level('1-1')
 
-        self.game.add_player_by_name('Player1')
+        player = PlayerProfileManager.load_profile('Player1')
+
+        self.game.add_player(player)
 
         self.player1 = self.game.players[0]
-        fireball = Fireball()
-        self.player1.hand.append(fireball)
 
+
+        self.player1.draw_card()
+        self.player1.draw_card()
+        self.player1.draw_card()
 
 
     def test_player1_turn(self):
@@ -43,7 +49,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(len(self.game.players), 1)
         self.assertEqual((self.game.battlefield.x_size, self.game.battlefield.y_size), (3, 3))
         self.assertEqual(self.game.players[0].hp, 30)
-        self.assertEqual(len(self.player1.hand), 1)
+        self.assertEqual(len(self.player1.hand), 3)
         self.assertIsInstance(self.player1.hand[0], Fireball)
 
 

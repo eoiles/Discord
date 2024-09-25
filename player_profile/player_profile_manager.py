@@ -2,6 +2,7 @@
 import json
 from CardGame.player import Player
 from CardGame.card import Card
+from CardGame.deck import Deck
 # player_profile_manager.py
 
 from CardGame.card import get_predefined_card
@@ -25,14 +26,17 @@ class PlayerProfileManager:
         )
 
         # Load the player's deck using predefined cards
-        deck = []
+        deck = Deck()
         for card_data in data["deck"]:
             card = get_predefined_card(card_data["card_id"])
             if card:
-                deck.append(card)
+                deck.add_card(card)
             else:
                 print(f"Card with id {card_data['card_id']} not found.")
 
         player.deck = deck
-        player.hand = data.get("hand", [])  # Load existing hand if available
+
+
+        assert isinstance(player, Player)
+
         return player

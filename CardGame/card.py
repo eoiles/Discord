@@ -101,7 +101,7 @@ class Death(Card):
         if monster:
             # Set monster's HP to 0 (kill the monster)
 
-            monster.hp = 0
+            monster.take_damage(monster.hp)
             print(f"{monster.name} at position ({x}, {y}) has been killed by TheDeath.")
         else:
             print(f"No monster found at position ({x}, {y}).")
@@ -116,7 +116,7 @@ class Blizzard(Card):
         self.emoji="<:blizzard:1288363343207337987>"
         self.description = "对战场上的所有怪物造成 1 点伤害。"
 
-    def play(self, battlefield):
+    def play(self, battlefield,x,y):
         """
         Play the 'Blizzard' card, which deals 1 damage to every monster on the battlefield.
         """

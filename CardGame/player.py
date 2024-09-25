@@ -10,16 +10,20 @@ class Player:
         self.hand = []  # This will hold the player's hand of cards
         self.deck = Deck()  # Add a deck for the player
 
-    def draw_card(self):
-        if len(self.hand) < self.hand_limit:
+    def draw_card(self, num_cards=1):
+        """Draw a specified number of cards from the deck."""
+        if len(self.hand) + num_cards > self.hand_limit:
+            print("Cannot draw more cards than hand limit.")
+            return
+
+        for _ in range(num_cards):
             drawn_card = self.deck.draw_card()
             if drawn_card:
                 self.hand.append(drawn_card)
                 print(f"Player drew: {drawn_card}")
             else:
                 print("No card drawn, deck is empty.")
-        else:
-            print("Hand is full, cannot draw more cards.")
+                break
 
     def play_card(self, card):
         if card in self.hand:

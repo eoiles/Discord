@@ -1,6 +1,6 @@
 {
     "player_id": 1,
-    "name": "Player One",
+    "name": "Player1",
     "hp": 30,
     "mana": 10,
     "hand_limit": 5,

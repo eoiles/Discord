@@ -1,18 +1,23 @@
 # deck.py
 
 import random
-from card import Card  # Import the Card class from card.py
+
+import sys
+import os
+
+# Add the parent directory of the 'tests' folder to sys.path
+sys.path.append(os.path.abspath('.'))
+
+from CardGame.card import Card  # Import the Card class from card.py
 
 class Deck:
     def __init__(self):
         self.cards = []
 
     def add_card(self, card):
-        if isinstance(card, Card):  # Check if card is an instance of Card
-            self.cards.append(card)
-            print(f"Added {card} to the deck.")
-        else:
-            print(f"Cannot add {card} to deck. Expected instance of Card.")
+        assert isinstance(card, Card)  # Check if card is an instance of Card
+        self.cards.append(card)
+        print(f"Added {card} to the deck.")
 
     def remove_card(self, card):
         if card in self.cards:

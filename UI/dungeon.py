@@ -58,21 +58,15 @@ class DungeonMenu(discord.ui.View):
         
         self.game = Game()
 
-        self.game.add_player('Player1')
 
         self.game.load_level("1-1")
 
 
 
         battlefield = await interaction.channel.send(view=Battlefield(self.game))
-        carddetail = await interaction.channel.send(view=CardDetail())
+        playermenu = await interaction.channel.send(view=PlayerMenu(self.game))
 
-        cardlist = await interaction.channel.send(view=Cardlist("player1"))
-
-        
-        playermenu = await interaction.channel.send(view=PlayerMenu())
-
-        self.components.extend([battlefield,carddetail,cardlist,playermenu])
+        self.components.extend([battlefield,playermenu])
 
 
 class Battlefield(discord.ui.View):
@@ -149,6 +143,26 @@ class Battlefield(discord.ui.View):
 
 
 
+
+class Cardlist(discord.ui.View):
+
+    #for now we only say player1
+    def __init__(self,player_name):
+        super().__init__()
+
+        button = discord.ui.Button(label='进入',emoji='<:LustThoughts:1210190946013024256>', style=discord.ButtonStyle.gray)
+
+        self.add_item(button)
+
+    player_name="player1"
+    '''
+    3 card slots for display player's cards which are 3 buttons to display player hand.
+
+    '''
+    #to be implement later
+    
+        
+        
 class Cardlist(discord.ui.View):
 
     #for now we only say player1
@@ -184,13 +198,7 @@ class Cardlist(discord.ui.View):
         await interaction.response.edit_message(view=self)
 
 
-class CardDetail(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.button=discord.ui.Button(label=f"火球术在命中目标后会产生爆炸,影响范围内的所有敌人", emoji= "<:6_:1282725896788115456>", style=discord.ButtonStyle.grey, custom_id='custom_id')
 
-        self.add_item(self.button)
-        
         
         
 
