@@ -10,8 +10,8 @@
     {
         "Name": "1-2",
         "Battlefield": [
-            ["Empty", "Goblin", "Empty"],
-            ["Empty", "Dragon", "Slime"],
+            ["Empty", "Slime", "Empty"],
+            ["Slime", "Dragon", "Slime"],
             ["Empty", "Slime", "Empty"]
         ]
     },

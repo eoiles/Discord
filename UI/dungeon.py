@@ -112,7 +112,7 @@ class Battlefield(discord.ui.View):
                             return str(number).translate(translation_table)
 
                         # Example usage in your code
-                        label = f"{to_fullwidth(monster.attack)}｜{to_fullwidth(monster.hp)}"
+                        label = f"{to_fullwidth(monster.attack)}|{to_fullwidth(monster.hp)}"
 
                         button = discord.ui.Button(label=label, emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
 
@@ -123,7 +123,7 @@ class Battlefield(discord.ui.View):
                     emoji='<:transparent:1286823572244922461>'
 
                     custom_id = f"{x}-{y}"
-                    label = "．．．"
+                    label = "．.．"
 
                     button = discord.ui.Button(label=label,emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
 
