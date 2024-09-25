@@ -48,6 +48,13 @@ class Game:
         """
         self.players.append(player)
 
+    def add_player_by_name(self, player_name):
+        """
+        Add a player to the game with the provided name.
+        :param player_name: Name of the player.
+        """
+        self.players.append(Player(player_name))
+
     def create_battlefield(self, x_size, y_size):
         """
         Create a new battlefield with the provided size.
@@ -143,5 +150,6 @@ class Game:
         else:
             print("No winner, it's a draw!")
 
-    def load_level(self,levle_name):
-        self.battlefield = Battlefield.load_level_by_name(levle_name)
+    
+    def load_level(self,level_name):
+        self.battlefield = Battlefield.load_level_by_name(level_name)

@@ -11,10 +11,8 @@
     "python.testing.pytestArgs": [
 
     ],
-    "python.testing.cwd": "D:\\Desktop\\Discord\\CardGame\\tests",
+    "python.testing.cwd": "D:\\Desktop\\Discord\\tests",
     "python.testing.autoTestDiscoverOnSaveEnabled": false,
     "python.analysis.extraPaths": [
-        "./CardGame",
-        "./CardGame"
     ]
 }
