@@ -25,14 +25,14 @@ class Game:
         self.round = 1
         self.is_game_over = False
 
-        
+
 
     def start(self):
         """
         Start the game and initialize any required setup.
         """
         print("Game started!")
-        self.ui.update_ui()  # Update the UI when the game starts
+
         display_game_state(self)  # Display initial game state
 
     def add_player(self, player):
@@ -136,3 +136,6 @@ class Game:
             print(f"{winner[0].name} wins!")
         else:
             print("No winner, it's a draw!")
+
+    def load_level(self,levle_name):
+        self.battlefield.load_level_by_name(levle_name)

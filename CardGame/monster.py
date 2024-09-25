@@ -1,12 +1,37 @@
+
+import json
+
 class Monster:
-    def __init__(self, name, attack, hp):
+    def __init__(self, name, attack, hp, emoji=""):
         self.name = name
         self.attack = attack
         self.hp = hp
         self.is_damaged_last_turn = False  # New attribute to track if monster was damaged 
 
         #store icon of each monsters
-        self.emoji='<:LustThoughts:1210190946013024256>'
+        self.emoji='<:transparent:1286823572244922461>'
+
+    @staticmethod
+    def load_monster_by_name(name):
+        """
+        Load a monster by its name from the 'monsters.json' file.
+        :param name: The name of the monster to load.
+        :return: A Monster instance or None if the monster is not found.
+        """
+        with open('CardGame/monsters.json', 'r') as file:
+            monsters = json.load(file)
+
+        for monster_data in monsters:
+            if monster_data['name'].lower() == name.lower():
+                return Monster(
+                    name=monster_data['name'],
+                    attack=monster_data['attack'],
+                    hp=monster_data['hp'],
+                    emoji=monster_data['emoji']
+                )
+        
+        print(f"Monster with name '{name}' not found.")
+        return None
 
     #actually eq need to check all attributes, not just listed
     def __eq__(self, other):

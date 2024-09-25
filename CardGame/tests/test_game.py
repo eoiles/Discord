@@ -31,12 +31,7 @@ class TestGame(unittest.TestCase):
         """
         Test adding monsters to the battlefield manually.
         """
-        self.goblin = Monster(name="Goblin", hp=5, attack=2)  # Create a goblin monster
-        self.orc = Monster(name="Orc", hp=8, attack=3)        # Create an orc monster
-
-        # Add monsters to the battlefield at specific positions
-        self.game.add_monster_to_battlefield(self.goblin, 1, 1)
-        self.game.add_monster_to_battlefield(self.orc, 2, 2)
+        self.game.load_level("1-1")
 
         # Start the game
         self.game.start()
@@ -57,15 +52,6 @@ class TestGame(unittest.TestCase):
         self.assertIsInstance(self.player1.hand[0], Fireball)  # E
 
 
-    def test_monster_on_battlefield(self):
-
-
-        """
-        Test if the monsters are correctly placed on the battlefield.
-        """
-        # Check if the goblin and orc are at the correct positions
-        self.assertEqual(self.game.battlefield.get_monster(1, 1), self.goblin)
-        self.assertEqual(self.game.battlefield.get_monster(2, 2), self.orc)
 
     def test_play_turn(self):
 

@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Slime",
+        "attack": 1,
+        "hp": 1,
+        "emoji": "<:slime:1288467086951059486>"
+    },
+    {
+        "name": "Dragon",
+        "attack": 9,
+        "hp": 9,
+        "emoji": "<:dragon:1288465777795530772>"
+    },
+    {
+        "name": "Goblin",
+        "attack": 2,
+        "hp": 3,
+        "emoji": "<:goblin:1288453894850220115>"
+    },
+    {
+        "name": "Orc",
+        "attack": 6,
+        "hp": 7,
+        "emoji": "<:orc:1288463126194290740>"
+    }
+]

@@ -1,0 +1,27 @@
+[
+    {
+        "Name": "1-1",
+        "Battlefield": [
+            ["orc", "Goblin", "Empty"],
+            ["Empty", "Dragon", "Slime"],
+            ["Empty", "Slime", "Empty"]
+        ]
+    },
+    {
+        "Name": "1-2",
+        "Battlefield": [
+            ["Empty", "Goblin", "Empty"],
+            ["Empty", "Dragon", "Slime"],
+            ["Empty", "Slime", "Empty"]
+        ]
+    },
+    {
+        "Name": "1-5",
+        "Battlefield": [
+            ["Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty"],
+            ["Empty", "Empty", "Empty"]
+        ]
+    }
+
+]

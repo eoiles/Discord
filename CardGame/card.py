@@ -27,7 +27,7 @@ class Card:
 def get_predefined_card(card_id):
     predefined_cards = {
         1: Fireball(),
-        2: TheDeath(),
+        2: Death(),
         3: Blizzard(),
         4: Heal(),
         5: Lightning()
@@ -57,7 +57,7 @@ class Fireball(Card):
             [0, 1, 0]
         ]
 
-        self.emoji="<:1_:1282725858724806727>"
+        self.emoji="<:fireball:1288351049979134112>"
 
         self.description = "对目标怪物造成AOE溅射伤害。"
 
@@ -82,11 +82,11 @@ TheDeath
 Instantly kills a single target monster on the battlefield.
 '''
 
-class TheDeath(Card):
+class Death(Card):
     def __init__(self):
         super().__init__("死亡", card_id=2, card_type="spell")
 
-        self.emoji="<:2_:1282725868120051743>"
+        self.emoji="<:death:1288355124221186079>"
 
         self.description = "瞬间消灭战场上指定位置的单个目标怪物。"
 
@@ -113,7 +113,7 @@ Deals 1 damage to each monster on the battlefield.
 class Blizzard(Card):
     def __init__(self):
         super().__init__("暴雪", card_id=3, card_type="spell")
-        self.emoji="<:3_:1282725880468082749>"
+        self.emoji="<:blizzard:1288363343207337987>"
         self.description = "对战场上的所有怪物造成 1 点伤害。"
 
     def play(self, battlefield):
@@ -136,7 +136,7 @@ Resotre player hp for 6.
 class Heal(Card):
     def __init__(self):
         super().__init__("治疗", card_id=4, card_type="spell")
-        self.emoji="<:4_:1282725886474453186>"
+        self.emoji="<:heal:1288448652968202242>"
         self.description = "为玩家恢复 6 点生命值。"
 
     def play(self, player):
@@ -172,7 +172,7 @@ class Lightning(Card):
             [0, 3, 0]
         ]
 
-        self.emoji="<:5_:1282725891956277279>"
+        self.emoji="<:lightning:1288450419764232265>"
 
         self.description = "对一列中的每个目标造成 3 点伤害。"
 
