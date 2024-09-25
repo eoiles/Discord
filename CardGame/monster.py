@@ -2,14 +2,14 @@
 import json
 
 class Monster:
-    def __init__(self, name, attack, hp, emoji=""):
+    def __init__(self, name, attack, hp, emoji='<:transparent:1286823572244922461>'):
         self.name = name
         self.attack = attack
         self.hp = hp
         self.is_damaged_last_turn = False  # New attribute to track if monster was damaged 
 
         #store icon of each monsters
-        self.emoji='<:transparent:1286823572244922461>'
+        self.emoji=emoji
     
 
 

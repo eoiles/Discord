@@ -7,7 +7,7 @@ from turn import Turn
 from display import display_game_state
 
 from player import Player
-from monster import Monster
+from CardGame.monster import Monster
 
 
 

@@ -2,12 +2,13 @@ import asyncio
 import discord
 import sys
 import os
-
-from UI.playermenu import PlayerMenu
-from CardGame.monster import Monster
-
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from CardGame.monster import Monster
+from UI.playermenu import PlayerMenu
+
+
+
+
 
 from CardGame.game import Game
 
@@ -59,16 +60,14 @@ class DungeonMenu(discord.ui.View):
 
         self.game.add_player('Player1')
 
-        self.game.create_battlefield(3, 3)
+        self.game.load_level("1-1")
 
-        goblin = self.game.add_new_monster_to_battlefield("Goblin", 1, 1, 1, 1)
-        orc = self.game.add_new_monster_to_battlefield("Orc", 2, 2, 2, 2)
 
 
         battlefield = await interaction.channel.send(view=Battlefield(self.game))
         carddetail = await interaction.channel.send(view=CardDetail())
 
-        cardlist = await interaction.channel.send(view=Cardlist(3,1))
+        cardlist = await interaction.channel.send(view=Cardlist("player1"))
 
         
         playermenu = await interaction.channel.send(view=PlayerMenu())
@@ -89,7 +88,9 @@ class Battlefield(discord.ui.View):
 
                 #if there is monster draw monster
                 if monster:
-                    assert type(monster) == Monster
+
+                    print(monster,Monster)
+                    assert isinstance(monster, Monster)
                     if not monster.is_alive():
 
 
@@ -154,13 +155,17 @@ class Cardlist(discord.ui.View):
     def __init__(self,player_name):
         super().__init__()
 
+        button = discord.ui.Button(label='进入',emoji='<:LustThoughts:1210190946013024256>', style=discord.ButtonStyle.gray)
+
+        self.add_item(button)
+
     player_name="player1"
     '''
     3 card slots for display player's cards which are 3 buttons to display player hand.
 
     '''
     #to be implement later
-    pass
+    
         
 
 
