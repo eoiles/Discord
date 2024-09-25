@@ -13,7 +13,7 @@ def draw_battlefield(battlefield):
             if monster:
                 if monster.name == "Corpse":
                     print("[ X ]", end=" ")  # Display "X" for corpses
-                if monster.is_damaged_last_turn:
+                elif monster.is_damaged_last_turn:
                     # Display damaged HP in yellow
                     print(f"[{monster.attack}|\033[93m{monster.hp}\033[0m]", end=" ")
                 else:

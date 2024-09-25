@@ -20,8 +20,6 @@ class Turn:
 
     def start_turn(self):
         print(f"{self.player.name}'s turn begins.")
-        #display turn state
-        self.display()
 
         self.wait_for_player_input()
         self.execute_action_queue()

@@ -10,6 +10,18 @@ class Monster:
 
         #store icon of each monsters
         self.emoji='<:transparent:1286823572244922461>'
+    
+
+
+    def to_corpse(self):
+        """
+        Transforms the monster into a corpse.
+        Typically, this means setting its HP to 0 and possibly
+        changing its status or type to indicate it's a corpse.
+        """
+        self.hp = 0  # Make sure the HP is set to 0
+        self.name = "Corpse"  # Optionally rename the monster
+        print(f"{self.name} is now a corpse.")
 
     @staticmethod
     def load_monster_by_name(name):

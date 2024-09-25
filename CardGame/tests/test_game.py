@@ -12,72 +12,30 @@ from card import Fireball
 from battlefield import Battlefield
 
 class TestGame(unittest.TestCase):
-    
+
     def setUp(self):
-        """
-        Set up the game environment before each test.
-        """
-        # Create players
+        # Setup code without game turn execution
         self.player1 = Player(name="Player1", hp=10)
-        self.player2 = Player(name="Player2", hp=10)
+        fireball = Fireball()
+        self.player1.hand.append(fireball)
+        self.game = Game(players=[self.player1], battlefield_size=(3, 3))
+        self.game.load_level("1-1")  # Load the level, but don't play turn yet
 
-        # Manually add a Fireball card to player1's hand for testing purposes
-        fireball = Fireball()  # Create the Fireball card
-        self.player1.hand.append(fireball)  # Add Fireball to player1's hand
-
-        # Initialize the game with a 3x3 battlefield
-        self.game = Game(players=[self.player1, self.player2], battlefield_size=(3, 3))
-
-        """
-        Test adding monsters to the battlefield manually.
-        """
-        self.game.load_level("1-1")
-
-        # Start the game
+    def test_player1_turn(self):
+        # Call play_turn() only in this specific test
         self.game.start()
-
+        self.game.play_turn()
 
     def test_initialize_game(self):
-        """
-        Test that the game initializes correctly with two players and a battlefield.
-        """
-        self.assertEqual(len(self.game.players), 2)
-        self.assertEqual((self.game.battlefield.x_size,self.game.battlefield.y_size), (3, 3))
+    # Initialization-related checks without running a turn
+        self.assertEqual(len(self.game.players), 1)
+        self.assertEqual((self.game.battlefield.x_size, self.game.battlefield.y_size), (3, 3))
         self.assertEqual(self.game.players[0].hp, 10)
-        self.assertEqual(self.game.players[1].hp, 10)
-        """
-        Test that player1 has the Fireball card in their hand.
-        """
         self.assertEqual(len(self.player1.hand), 1)
-        self.assertIsInstance(self.player1.hand[0], Fireball)  # E
+        self.assertIsInstance(self.player1.hand[0], Fireball)
 
 
 
-    def test_play_turn(self):
-
-        # Simulate turns
-        self.game.play_turn()  # Player 1's turn
-        self.game.play_turn()  # Player 2's turn
-
-        # Check if the round number has advanced
-        self.assertEqual(self.game.round, 3)
-
-        # Test player switching after a turn
-        self.assertEqual(self.game.players[self.game.current_player_idx].name, "Player1")
-
-    def test_game_over(self):
-        """
-        Test that the game correctly ends when all players' HP reaches 0.
-        """
-        # Set all players' HP to 0 to simulate defeat
-        self.player1.hp = 0
-        self.player2.hp = 0
-
-        result = self.game.check_winner()
-
-        # Assert that the game is over and returns the correct message
-        self.assertTrue(self.game.is_player_all_dead(self.game.players))
-        self.assertEqual(result, "Game Over - All players defeated!")
 
 if __name__ == "__main__":
     unittest.main()

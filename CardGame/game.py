@@ -35,6 +35,12 @@ class Game:
 
         display_game_state(self)  # Display initial game state
 
+    def display(self):
+        """
+        Display the current state of the game.
+        """
+        display_game_state(self)
+
     def add_player(self, player):
         """
         Add a player to the game.
@@ -138,4 +144,4 @@ class Game:
             print("No winner, it's a draw!")
 
     def load_level(self,levle_name):
-        self.battlefield.load_level_by_name(levle_name)
+        self.battlefield = Battlefield.load_level_by_name(levle_name)
