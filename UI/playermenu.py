@@ -6,11 +6,15 @@ import requests
 from CardGame.game import Game
 from player_profile.player_profile_manager import PlayerProfileManager
 from CardGame.player import Player
+
+from CardGame.card import Card
 import random
 
 class PlayerMenu(discord.ui.View):
     def __init__(self,game: Game):
         super().__init__()
+
+        self.ephemeral_message_ids = {}  # Store message IDs by user
 
         self.user = None
         self.guild = None
@@ -42,6 +46,34 @@ class PlayerMenu(discord.ui.View):
         await interaction.message.edit(view=self)
         await self.show_avatar(interaction)
 
+
+    async def show_card_details(self, interaction: discord.Interaction, card: Card):
+        """
+        Display the card details in an ephemeral message, editing the previous message if it exists.
+        """
+        content = f"{card.emoji} {card.name}\n{card.description}"
+
+        # Check if interaction is done or defer it
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
+
+        user_id = interaction.user.id  # Get the user's ID
+
+        # If this is the first time for this user, send a new ephemeral message
+        if user_id not in self.ephemeral_message_ids:
+            message = await interaction.followup.send(
+                content=content,
+                ephemeral=True  # Makes the message visible only to the user
+            )
+            if message:  # Make sure message is not None
+                self.ephemeral_message_ids[user_id] = message.id  # Store the message ID for this user
+        else:
+            # Edit the existing ephemeral message for this user
+            await interaction.followup.edit_message(
+                message_id=self.ephemeral_message_ids[user_id],
+                content=content
+            )
+
     
     async def show_player_hand(self, player: Player, interaction: discord.Interaction):
         """Load player.hand and display as up to 4 buttons."""
@@ -49,7 +81,7 @@ class PlayerMenu(discord.ui.View):
                 # Defer the interaction to give yourself more time
         await interaction.response.defer()  # This sends an "acknowledgment" response
 
-        
+
         hand = player.hand
 
         if len(hand) == 0:
@@ -72,6 +104,8 @@ class PlayerMenu(discord.ui.View):
                             emoji=card.emoji,
                             row=(i - 1) // 3 + 1
                         )
+
+                        button.callback = lambda interaction, card=card: self.show_card_details(interaction, card)
                         self.add_item(button)
 
 
