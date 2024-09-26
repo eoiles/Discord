@@ -41,7 +41,7 @@ class Battlefield(discord.ui.View):
                         emoji='<:transparent:1286823572244922461>'
 
                         custom_id = f"{x}-{y}"
-                        label = "．Ｘ．"
+                        label = "．x．"
 
                         button = MonsterButton(monster=monster, 
                                                label=label, 
@@ -102,7 +102,7 @@ class Battlefield(discord.ui.View):
                 if monster:
                     if not monster.is_alive():
                         emoji = '<:transparent:1286823572244922461>'
-                        label = '．Ｘ．'
+                        label = '．x．'
                         style = discord.ButtonStyle.grey
                     else:
                         emoji = monster.emoji

@@ -140,7 +140,7 @@ class Heal(Card):
         self.emoji="<:heal:1288448652968202242>"
         self.description = "为玩家恢复 6 点生命值。"
 
-    def play(self, player):
+    def play(self, player,x,y):
         """
         Play the 'Heal' card, which restores 6 HP to the player.
         """
@@ -182,11 +182,11 @@ class Lightning(Card):
         Play the Lightning card at the (x, y) position on the battlefield.
         The damage is applied in a vertical line (column).
         """
-        for dx in range(-1, 2):  # Loop through -1, 0, 1 for row offsets
-            target_x, target_y = x + dx, y
-            if 1 <= target_x <= battlefield.x_size:
+        for dy in range(-1, 2):  # Loop through -1, 0, 1 for column offsets
+            target_x, target_y = x, y + dy
+            if 1 <= target_y <= battlefield.y_size:
                 monster = battlefield.get_monster(target_x, target_y)
                 if monster:
-                    damage = self.effect_grid[dx + 1][1]
+                    damage = self.effect_grid[1][dy + 1]
                     monster.take_damage(damage)
                     print(f"Dealt {damage} damage to monster at ({target_x}, {target_y})")
