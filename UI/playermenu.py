@@ -1,3 +1,8 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from UI.dungeon import DungeonMenu
+
 
 from io import BytesIO
 import re
@@ -6,9 +11,11 @@ import requests
 from CardGame.game import Game
 from player_profile.player_profile_manager import PlayerProfileManager
 from CardGame.player import Player
-
+import asyncio
 from CardGame.card import Card
 import random
+
+
 
 
 class CardButton(discord.ui.Button):
@@ -37,9 +44,12 @@ class CardButton(discord.ui.Button):
                 item.style = discord.ButtonStyle.blurple  # Change back to blue
 
         # Update the view
-        await interaction.response.edit_message(view=self.view)
 
         await self.show_card_details(interaction)
+
+        await interaction.message.edit(view=self.view)
+
+        
 
 
 
@@ -71,9 +81,15 @@ class CardButton(discord.ui.Button):
                 content=content
             )
 
+
+
 class PlayerMenu(discord.ui.View):
-    def __init__(self,game: Game):
+    
+    def __init__(self,game: Game,dungeon : 'DungeonMenu'):
+        
         super().__init__()
+
+        self.dungeon = dungeon
 
         self.ephemeral_message_ids = {}  # Store message IDs by user
 
@@ -82,7 +98,7 @@ class PlayerMenu(discord.ui.View):
 
         self.game = game
 
-        self.selected_card_button = None
+        self.selected_card_button : CardButton
 
         # Button for showing the user's avatar
         self.user_portrait = discord.ui.Button(
@@ -93,6 +109,7 @@ class PlayerMenu(discord.ui.View):
         self.user_portrait.callback = self.join_game
         self.add_item(self.user_portrait)
 
+
     #the place for 3 cards of player hand
     async def card_buttons(self, x:int):
         return self.children[x]
@@ -100,30 +117,77 @@ class PlayerMenu(discord.ui.View):
 
 
     async def join_game(self, interaction: discord.Interaction):
-        """Join the game and show the user's avatar."""
-        
-        player = PlayerProfileManager.load_profile('Player1')
+        """Join the game and show the user's avatar and hp and mana and ready button."""
 
-        assert isinstance(player,Player)
+        
+        self.user_portrait.label = "Loading..."
+        await interaction.response.edit_message(view=self)
+
+        player = PlayerProfileManager.load_profile('Player1')
+        assert isinstance(player, Player)
 
         self.game.add_player(player)
-
         self.game.start()
 
-        await self.show_player_hand(player, interaction)
+        # Create tasks for the two coroutines
+        hand = asyncio.create_task(self.show_player_hand(player, interaction))
+        avatar = asyncio.create_task(self.show_avatar(interaction))
+        status = asyncio.create_task(self.show_player_status(player, interaction))
 
+        # Run the tasks in parallel
+        await asyncio.gather(hand, avatar,status)
+
+    #display the hp and ready button.
+    async def show_player_status(self, player: Player, interaction: discord.Interaction):
+        """Display the player's HP and the "Ready" button."""
+
+        # Create the HP label
+        hp_label = discord.ui.Button(label=f"HP: {player.hp}", 
+                                     disabled=True,
+                                     style=discord.ButtonStyle.grey,
+                                     row=2)
+        self.add_item(hp_label)
+
+        # Create the "Ready" label
+        ready_label = discord.ui.Button(label="准备", 
+                                        style=discord.ButtonStyle.primary,
+                                        row=2)
+        ready_label.callback = self.on_ready
+
+        self.add_item(ready_label)
+
+        # Edit the original message with the updated view
         await interaction.message.edit(view=self)
-        await self.show_avatar(interaction)
 
+    
+    async def on_ready(self, interaction: discord.Interaction):
+        """Handle the "Ready" button click.
+            Check and get selected card and selected monster.
+            add to game action queue.
+            then resolve.
+        """
 
+        monster_button =self.dungeon.battlefield.selected_monster_button
+        card_button =self.selected_card_button
+        
+        if monster_button and card_button:
+            position = monster_button.position
+            card = card_button.card
+
+            self.game.add_player_action(self.user, card, *position)
+
+            self.game.next_turn()
+
+            await self.dungeon.battlefield.update(self.dungeon.battlefield_view)
+
+        
+
+        await interaction.response.edit_message(view=self)
 
 
     
     async def show_player_hand(self, player: Player, interaction: discord.Interaction):
         """Load player.hand and display as up to 4 buttons."""
-
-                # Defer the interaction to give yourself more time
-        await interaction.response.defer()  # This sends an "acknowledgment" response
 
 
         hand = player.hand
@@ -155,22 +219,14 @@ class PlayerMenu(discord.ui.View):
                             row=(i - 1) // 3 + 1
                         )
 
-                        
-
 
                         self.add_item(button)
 
 
         await interaction.message.edit(view=self)
 
-
-        
-
     async def show_avatar(self, interaction: discord.Interaction):
         """Handle the button click and show the user's avatar as a custom emoji."""
-
-        self.user_portrait.label = f"Loading..."
-        await interaction.message.edit(view=self)
 
 
 
@@ -202,7 +258,7 @@ class PlayerMenu(discord.ui.View):
             return
 
         # Update the button label and emoji
-        self.user_portrait.label = f"{self.user.name}'s Avatar"
+        self.user_portrait.label = f"{self.user.name}"
 
         self.user_portrait.emoji = new_emoji
 

@@ -9,6 +9,9 @@ from display import display_game_state
 from CardGame.player import Player
 from CardGame.monster import Monster
 
+from CardGame.action import Action
+from CardGame.card import Card
+
 
 
 
@@ -24,6 +27,7 @@ class Game:
         self.current_player_idx = 0
         self.round = 1
         self.is_game_over = False
+        self.current_turn =None
 
 
 
@@ -36,10 +40,22 @@ class Game:
         self.initialize_player_hand()
 
         display_game_state(self)  # Display initial game state
+
+        self.current_turn = Turn(self.players[self.current_player_idx], self.battlefield)
+        self.current_turn.discord_start_turn()
+
+
+
+    def add_player_action(self, player:Player , card:Card , x : int, y : int):
+        self.current_turn.append_action_to_action_queue(player, card, x, y)
     
 
-    #if the player hand is less than 3 cards then draw cards to 3.
+    def next_turn(self):
+        self.current_turn.end_turn()
+        self.current_turn = Turn(self.players[self.current_player_idx], self.battlefield)
 
+
+    #if the player hand is less than 3 cards then draw cards to 3.
     def initialize_player_hand(self):
         """
         Initialize the player's hand with 3 cards.

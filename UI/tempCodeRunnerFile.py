@@ -1,0 +1,1 @@
+        await interaction.response.message.edit(view=self)

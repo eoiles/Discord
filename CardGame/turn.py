@@ -2,6 +2,9 @@ from display import draw_player_hand
 from display import draw_turn
 from action import Action
 
+from CardGame.player import Player
+from CardGame.card import Card
+
 
 class Turn:
     def __init__(self, player, battlefield):
@@ -24,6 +27,16 @@ class Turn:
         self.player.draw_card()
 
         self.wait_for_player_input()
+
+    def discord_start_turn(self):
+
+        pass
+
+
+    #after all the player press ready, this turn resolve and end
+    def end_turn(self):
+        print(f"{self.player.name}'s turn ends.")
+
         self.execute_action_queue()
 
         self.display()
@@ -70,6 +83,13 @@ class Turn:
 
             #quit loop if valid input
             break
+
+    def append_action_to_action_queue(self, player:Player,card:Card, x,y):
+        """
+        Append an action to the action queue.
+        """
+        action = Action(player, card, (x, y))
+        self.action_queue.append(action)
             
 
 

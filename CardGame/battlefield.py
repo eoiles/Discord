@@ -2,7 +2,7 @@ from CardGame.monster import Monster
 #we do not do any display print outside the display class every display should use display class
 import json
 
-from display import draw_battlefield
+from CardGame.display import draw_battlefield
 
 class Battlefield:
     '''
