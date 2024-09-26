@@ -8,6 +8,7 @@ class Card:
         self.emoji = None
         self.description = description
 
+
     def __str__(self):
         return f"Card(name='{self.name}', card_id={self.card_id}, card_type='{self.card_type}')"
 

@@ -93,8 +93,12 @@ class Battlefield(discord.ui.View):
                         custom_id = f"{x}-{y}"
                         label = "．Ｘ．"
 
-                        button = discord.ui.Button(label=label,emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
-
+                        button = MonsterButton(monster=monster, 
+                                               label=label, 
+                                               emoji=emoji, 
+                                               style=discord.ButtonStyle.grey, 
+                                               custom_id=custom_id, 
+                                               row=y)
 
                     else:
                         emoji = monster.emoji
@@ -108,7 +112,12 @@ class Battlefield(discord.ui.View):
                         # Example usage in your code
                         label = f"{to_fullwidth(monster.attack)}|{to_fullwidth(monster.hp)}"
 
-                        button = discord.ui.Button(label=label, emoji=emoji, style=discord.ButtonStyle.red, custom_id=custom_id, row=y)
+                        button = MonsterButton(monster=monster, 
+                                               label=label, 
+                                               emoji=emoji, 
+                                               style=discord.ButtonStyle.red, 
+                                               custom_id=custom_id, 
+                                               row=y)
 
                     
                 #magic:"ᅠᅠᅠ"
@@ -119,28 +128,44 @@ class Battlefield(discord.ui.View):
                     custom_id = f"{x}-{y}"
                     label = "．.．"
 
-                    button = discord.ui.Button(label=label,emoji=emoji, style=discord.ButtonStyle.grey, custom_id=custom_id, row=y)
+                    button = MonsterButton(monster=monster, 
+                                           label=label, 
+                                           emoji=emoji, 
+                                           style=discord.ButtonStyle.grey, 
+                                           custom_id=custom_id, 
+                                           row=y)
 
                 
-                button.callback = self.toggle_color
                 self.add_item(button)
                 self.buttons.append(button)
 
 
-    async def toggle_color(self, interaction: discord.Interaction):
-        custom_id = interaction.data['custom_id']
-        original_button = next((button for button in self.buttons if button.custom_id == custom_id), None)
-        
-        if original_button:
-            if original_button.style == discord.ButtonStyle.red:
-                original_button.style = discord.ButtonStyle.green
-            else:
-                original_button.style = discord.ButtonStyle.red
-        else:
-            print("Button not found")
-        
-        await interaction.response.edit_message(view=self)
 
+class MonsterButton(discord.ui.Button):
+    def __init__(self, monster, **kwargs):
+        super().__init__(**kwargs)
+        self.monster = monster
+        self.base_style = kwargs.get('style', discord.ButtonStyle.gray)
+        self.selected = False
+
+        self.callback = self.on_monster_pressed
+
+    async def on_monster_pressed(self, interaction: discord.Interaction):
+        # Reset other MonsterButtons in the parent view
+        for item in self.view.children:
+            if isinstance(item, MonsterButton) and item != self:
+                item.selected = False
+                item.style = item.base_style
+
+        # Toggle the selected state of this MonsterButton
+        self.selected = not self.selected
+
+        if self.selected:
+            self.style = discord.ButtonStyle.green
+        else:
+            self.style = self.base_style
+
+        await interaction.response.edit_message(view=self.view)
 
 
 
